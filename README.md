@@ -12,34 +12,40 @@ MoonBit Crypto aims to provide a robust, modular, and easy-to-use cryptographic 
 
 | Package | Description | Status |
 |---------|-------------|--------|
-| **mb-getrandom** | Secure random number generation (OS entropy; native+WASM) | ✅ DONE |
-| **mb-chacha** | ChaCha20 stream cipher implementation | 🚧 In Development |
-| **mb-rand-chacha** | ChaCha20-based DRBG with reseed & fork-safety | 🚧 In Development |
+| **mb-getrandom** | Secure random number generation (OS entropy; native + WASM) | Done |
+| **mb-chacha** | ChaCha20 and XChaCha20 stream ciphers (RFC 8439) | Done |
 
 ### Hash Functions & MACs
 
 | Package | Description | Status |
 |---------|-------------|--------|
-| **mb-hash** | Cryptographic hash functions (SHA-256, SHA-512) | ✅ DONE |
-| **mb-hmac** | Message Authentication Codes (HMAC) | ✅ DONE |
-| **mb-poly** | Message Authentication Codes (Poly1305) | 🚧 In Development |
-| **mb-kdf** | Key Derivation Functions (HKDF, PBKDF2, Argon2) | 🚧 In Development |
+| **mb-hash** | Cryptographic hash functions (SHA-256, SHA-512) | Done |
+| **mb-hmac** | HMAC-SHA256 and HMAC-SHA512 with constant-time verification | Done |
 
-### Encryption & Key Exchange
+### Application-Level Protocols
 
 | Package | Description | Status |
 |---------|-------------|--------|
-| **mb-aead** | Authenticated Encryption (ChaCha20-Poly1305, XChaCha20-Poly1305, AES-GCM) | 🚧 In Development |
-| **mb-aes** | AES block cipher implementation | 🚧 In Development |
-| **mb-ecdh** | Elliptic Curve Diffie-Hellman (X25519, P-256) | 🚧 In Development |
+| **mb-jwt** | JSON Web Tokens (HS256 signing and verification) | Done |
+
+### Planned
+
+| Package | Description |
+|---------|-------------|
+| **mb-poly** | Poly1305 message authentication |
+| **mb-aead** | Authenticated Encryption (ChaCha20-Poly1305, AES-GCM) |
+| **mb-kdf** | Key Derivation Functions (HKDF, PBKDF2) |
+| **mb-aes** | AES block cipher |
+| **mb-ecdh** | Elliptic Curve Diffie-Hellman (X25519, P-256) |
 
 ## Installation
 
 Each package can be installed independently using MoonBit's package manager:
 
 ```bash
-moon add moonbitlang/mb-hash
-moon add moonbitlang/mb-aead
+moon add moon-crypto/mb-hash
+moon add moon-crypto/mb-mac     # HMAC package
+moon add moon-crypto/mb-jwt
 # etc.
 ```
 
@@ -48,12 +54,10 @@ moon add moonbitlang/mb-aead
 ### Generate Random Bytes
 
 ```moonbit
-use moonbitlang/mb-getrandom
-
 fn main {
-  let mut buffer = Bytes::new(32)
-  match getrandom(buffer) {
-    Ok(_) => println("Random bytes generated")
+  let bytes = @lib.getrandom(32)
+  match bytes {
+    Ok(b) => println("Generated 32 random bytes")
     Err(e) => println("Error: \{e}")
   }
 }
@@ -62,85 +66,122 @@ fn main {
 ### Hash Data with SHA-256
 
 ```moonbit
-use moonbitlang/mb-hash
-
 fn main {
-  let data = "Hello, MoonBit!".to_bytes()
-  let hash = sha256(data)
-  println("SHA-256: \{hash.to_hex()}")
+  // One-shot hashing
+  let hash = @sha2.Sha256::digest_string("Hello, MoonBit!")
+  let hex = @sha2.hash_to_hex(hash)
+  println("SHA-256: \{hex}")
+
+  // Incremental hashing
+  let hasher = @sha2.Sha256::new()
+  hasher.update(data_part1)
+  hasher.update(data_part2)
+  let hash = hasher.finalize()
 }
 ```
 
-### Authenticated Encryption with ChaCha20-Poly1305
+### HMAC-SHA256
 
 ```moonbit
-use moonbitlang/mb-aead
-
 fn main {
-  let key = random_key(32)
-  let nonce = random_nonce(12)
-  let plaintext = "Secret message".to_bytes()
-  
-  let cipher = ChaCha20Poly1305::new(key)?
-  let ciphertext = cipher.encrypt(nonce, plaintext, None)?
-  let decrypted = cipher.decrypt(nonce, ciphertext, None)?
+  // Generate MAC
+  let mac = @hmac.hmac_sha256_string("message", "secret-key")
+
+  // Verify MAC (constant-time comparison)
+  let valid = @hmac.verify_hmac_sha256_string("message", "secret-key", mac_to_verify)
 }
+```
+
+### ChaCha20 Encryption
+
+```moonbit
+fn main {
+  let cipher = @chacha20.ChaCha20::new(key, nonce) // 32-byte key, 12-byte nonce
+  match cipher {
+    Ok(c) => {
+      let ciphertext = c.encrypt_bytes(plaintext)
+      // Decrypt with a fresh cipher instance (same key/nonce)
+      let c2 = @chacha20.ChaCha20::new(key, nonce).unwrap()
+      let decrypted = c2.decrypt_bytes(ciphertext)
+    }
+    Err(e) => println("Error: \{e}")
+  }
+}
+```
+
+### XChaCha20 Encryption
+
+```moonbit
+fn main {
+  // Extended nonce variant (24-byte nonce) - safer for random nonces
+  let cipher = @chacha20.XChaCha20::new(key, nonce) // 32-byte key, 24-byte nonce
+  match cipher {
+    Ok(c) => {
+      let ciphertext = c.encrypt_bytes(plaintext)
+    }
+    Err(e) => println("Error: \{e}")
+  }
+}
+```
+
+### JWT Signing and Verification
+
+```moonbit
+fn main {
+  let payload = "{\"sub\":\"1234567890\",\"name\":\"John\",\"iat\":1516239022}"
+  let secret = "my-secret-key"
+
+  // Sign
+  let token = @jwt.sign(payload, secret)
+
+  // Verify and decode
+  match @jwt.verify(token, secret) {
+    Ok(decoded_payload) => println("Payload: \{decoded_payload}")
+    Err(e) => println("Invalid token: \{e}")
+  }
+
+  // Decode without verification (for inspecting tokens)
+  let header = @jwt.decode_header(token)
+  let payload = @jwt.decode(token)
+}
+```
+
+## Dependency Graph
+
+```
+mb-jwt --> mb-hmac --> mb-hash
+mb-chacha --> mb-getrandom
 ```
 
 ## Security Considerations
 
-⚠️ **Important**: These libraries are currently in development and have not been audited. Do not use in production systems yet.
+**Important**: These libraries are in development and have not been audited. Do not use in production systems yet.
 
 - All implementations aim to be constant-time where applicable
-- Test vectors from relevant RFCs and standards are included
-- Fork-safety and proper entropy management are prioritized
+- Test vectors from relevant RFCs and NIST standards are included
+- HMAC verification uses constant-time comparison to prevent timing attacks
 - WebAssembly support includes secure random generation via Web Crypto API
 
-## Development Roadmap
+## Development
 
-### Phase 1: Foundation (Current)
-- ✅ Project structure and build setup
-- ✅ mb-getrandom: OS entropy access
-- 🚧 mb-chacha: Core ChaCha20 implementation with test vectors
+### Build and Test
 
-### Phase 2: Core Crypto
-- 🔄 mb-rand-chacha: CSPRNG with reseeding
-- 🔄 mb-hash: SHA-256/512 implementations
-- 🔄 mb-mac: HMAC and Poly1305
+```bash
+moon build              # Build all packages
+moon test               # Run all tests
+moon test --target js   # Run tests with JavaScript backend
+```
 
-### Phase 3: Advanced Features
-- 📋 mb-kdf: HKDF, PBKDF2, Argon2
-- 📋 mb-aead: ChaCha20-Poly1305, AES-GCM
-- 📋 mb-aes: AES block cipher
-- 📋 mb-ecdh: X25519, P-256 key exchange
+### Platform Support
 
-### Phase 4: Production Ready
-- 📋 Security audit
-- 📋 Performance optimization
-- 📋 Comprehensive documentation
-- 📋 Additional algorithms based on community needs
+| Target | Random | Hash | HMAC | ChaCha20 | JWT |
+|--------|--------|------|------|----------|-----|
+| Native | C FFI (`/dev/urandom`, `BCryptGenRandom`) | Pure MoonBit | Pure MoonBit | Pure MoonBit | Pure MoonBit |
+| JS/WASM | Web Crypto API / Node.js `crypto` | Pure MoonBit | Pure MoonBit | Pure MoonBit | Pure MoonBit |
 
 ## Contributing
 
 Contributions are welcome! Please read our contributing guidelines before submitting PRs.
-
-### Development Setup
-
-```bash
-git clone https://github.com/moonbitlang/mb-crypto
-cd mb-crypto
-moon test        # Run all tests
-moon build       # Build all packages
-```
-
-### Testing
-
-Each package includes comprehensive test suites with official test vectors:
-
-```bash
-cd packages/mb-chacha
-moon test
-```
 
 ## License
 
@@ -150,7 +191,6 @@ All packages are licensed under the Apache License, Version 2.0. See [LICENSE](L
 
 - Inspired by the [RustCrypto](https://github.com/RustCrypto) project
 - Test vectors from IETF RFCs and NIST standards
-- MoonBit community for feedback and contributions
 
 ## Security Reporting
 
@@ -161,11 +201,3 @@ If you discover a security vulnerability, please email security@moonbitlang.org 
 - [MoonBit Language](https://www.moonbitlang.org/)
 - [Documentation](https://docs.moonbitlang.org/)
 - [Community Discord](https://discord.gg/moonbit)
-
----
-
-**Status Legend:**
-- ✅ Complete
-- 🚧 In Development
-- 🔄 Planned (Next Phase)
-- 📋 Future
