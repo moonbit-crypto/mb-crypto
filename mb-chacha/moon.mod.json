@@ -1,5 +1,5 @@
 {
-  "name": "moonbit-crypto/mb-chacha",
+  "name": "Tigls/mb-chacha",
   "version": "0.1.0",
   "description": "ChaCha20 and XChaCha20 stream ciphers for MoonBit (RFC 8439)",
   "repository": "https://github.com/moonbit-crypto/mb-crypto",
@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "keywords": ["crypto", "chacha", "chacha20", "xchacha20", "stream-cipher"],
   "deps": {
-    "moonbit-crypto/mb-getrandom": {
+    "Tigls/mb-getrandom": {
       "path": "../mb-getrandom"
     }
   }

@@ -1,5 +1,5 @@
 {
-  "name": "moonbit-crypto/mb-hmac",
+  "name": "Tigls/mb-hmac",
   "version": "0.1.0",
   "description": "HMAC message authentication for MoonBit (HMAC-SHA256, HMAC-SHA512; native+WASM)",
   "repository": "https://github.com/moonbit-crypto/mb-crypto",
@@ -8,7 +8,7 @@
   "keywords": ["crypto", "mac", "hmac", "hmac-sha256", "hmac-sha512"],
   "source": "src",
   "deps": {
-    "moonbit-crypto/mb-hash": {
+    "Tigls/mb-hash": {
       "path": "../mb-hash"
     }
   }

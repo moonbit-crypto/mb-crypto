@@ -1,5 +1,5 @@
 {
-  "name": "moonbit-crypto/mb-hash",
+  "name": "Tigls/mb-hash",
   "version": "0.1.0",
   "description": "Secure hashing for MoonBit (SHA-256, SHA-512; native+WASM)",
   "repository": "https://github.com/moonbit-crypto/mb-crypto",
