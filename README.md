@@ -43,9 +43,9 @@ MoonBit Crypto aims to provide a robust, modular, and easy-to-use cryptographic 
 Each package can be installed independently using MoonBit's package manager:
 
 ```bash
-moon add moonbit-crypto/mb-hash
-moon add moonbit-crypto/mb-hmac     # HMAC package
-moon add moonbit-crypto/mb-jwt
+moon add Tigls/mb-hash
+moon add Tigls/mb-hmac     # HMAC package
+moon add Tigls/mb-jwt
 # etc.
 ```
 
@@ -167,10 +167,13 @@ mb-chacha --> mb-getrandom
 ### Build and Test
 
 ```bash
-moon build              # Build all packages
-moon test               # Run all tests
-moon test --target js   # Run tests with JavaScript backend
+moon build                # Build all packages
+moon test --target native # Run tests with native backend
+moon test --target js     # Run tests with JavaScript backend
 ```
+
+> **Note:** Bare `moon test` (wasm-gc target) will fail for packages with custom host imports (e.g., mb-getrandom).
+> Use `--target native` or `--target js` instead. For wasm-gc testing, see each package's README.
 
 ### Platform Support
 
