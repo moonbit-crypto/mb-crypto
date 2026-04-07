@@ -1,7 +1,8 @@
 # MoonBit build artifacts
-target/
-.mooncakes/
-.claude/
+target
+_build
+.mooncakes
+.claude
 CLAUDE.md
 *.wasm
 *.wat
