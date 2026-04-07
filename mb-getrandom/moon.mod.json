@@ -1,5 +1,5 @@
 {
-  "name": "moonbit-crypto/mb-getrandom",
+  "name": "Tigls/mb-getrandom",
   "version": "0.1.0",
   "description": "Secure random number generation for MoonBit (OS entropy; native+WASM)",
   "repository": "https://github.com/moonbit-crypto/mb-crypto",

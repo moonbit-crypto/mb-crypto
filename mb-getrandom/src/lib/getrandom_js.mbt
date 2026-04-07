@@ -32,7 +32,7 @@ pub fn getrandom(len: Int) -> Result[Bytes, String] {
     zeros.push(b'\x00')
     i = i + 1
   }
-  let dest = @bytes.from_array(zeros)
+  let dest = Bytes::from_array(zeros)
   
   let result = js_crypto_get_random_values(dest, len)
   if result != 0 {

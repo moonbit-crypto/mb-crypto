@@ -11,7 +11,7 @@ test {
   while idx < lens.length() {
     let len = lens[idx]
     let res = getrandom(len)
-    assert_true(res.is_ok())
+    assert_true(res is Ok(_))
     match res {
       Ok(bytes) => {
         assert_true(bytes.length() == len)

@@ -2,7 +2,8 @@
   "is_main": false,
   "targets": {
     "getrandom_native.mbt": ["native"],
-    "getrandom_js.mbt": ["js"]
+    "getrandom_js.mbt": ["js"],
+    "getrandom_wasm.mbt": ["wasm", "wasm-gc"]
   },
   "native-stub": [
     "getrandom_stub.c"
