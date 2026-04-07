@@ -1,0 +1,6 @@
+{
+  "is-main": false,
+  "import": [
+    { "path": "moon-crypto/mb-mac", "alias": "hmac" }
+  ]
+}
