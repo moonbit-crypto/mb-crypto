@@ -1,6 +1,6 @@
 {
   "is-main": false,
   "import": [
-    "moon-crypto/mb-hash/sha2"
+    "moonbit-crypto/mb-hash/sha2"
   ]
 }

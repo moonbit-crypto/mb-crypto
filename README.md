@@ -43,9 +43,9 @@ MoonBit Crypto aims to provide a robust, modular, and easy-to-use cryptographic 
 Each package can be installed independently using MoonBit's package manager:
 
 ```bash
-moon add moon-crypto/mb-hash
-moon add moon-crypto/mb-mac     # HMAC package
-moon add moon-crypto/mb-jwt
+moon add moonbit-crypto/mb-hash
+moon add moonbit-crypto/mb-hmac     # HMAC package
+moon add moonbit-crypto/mb-jwt
 # etc.
 ```
 

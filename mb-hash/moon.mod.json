@@ -1,12 +1,10 @@
 {
-  "name": "moon-crypto/mb-hash",
+  "name": "moonbit-crypto/mb-hash",
   "version": "0.1.0",
-  "description": "Secure hashing for MoonBit (SHA-256; native+WASM)",
-  "repository": "https://github.com/Tigls/moonbit-crypto",
+  "description": "Secure hashing for MoonBit (SHA-256, SHA-512; native+WASM)",
+  "repository": "https://github.com/moonbit-crypto/mb-crypto",
   "readme": "README.md",
   "license": "Apache-2.0",
-  "keywords": ["crypto", "hash", "sha256", "sha2"],
-  "imports": ["./src/sha2/lib.mbt"],
-  "source": "src",
-  "preferred-target": "native"
+  "keywords": ["crypto", "hash", "sha256", "sha512", "sha2"],
+  "source": "src"
 }

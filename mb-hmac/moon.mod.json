@@ -1,16 +1,14 @@
 {
-  "name": "moon-crypto/mb-mac",
+  "name": "moonbit-crypto/mb-hmac",
   "version": "0.1.0",
-  "description": "Message Authentication Codes for MoonBit (HMAC, Poly1305; native+WASM)",
-  "repository": "https://github.com/Tigls/moonbit-crypto",
+  "description": "HMAC message authentication for MoonBit (HMAC-SHA256, HMAC-SHA512; native+WASM)",
+  "repository": "https://github.com/moonbit-crypto/mb-crypto",
   "readme": "README.md",
   "license": "Apache-2.0",
-  "keywords": ["crypto", "mac", "hmac", "poly1305"],
-  "imports": ["./src/mac/lib.mbt"],
+  "keywords": ["crypto", "mac", "hmac", "hmac-sha256", "hmac-sha512"],
   "source": "src",
-  "preferred-target": "native",
   "deps": {
-   "moon-crypto/mb-hash": {
+    "moonbit-crypto/mb-hash": {
       "path": "../mb-hash"
     }
   }
