@@ -70,7 +70,7 @@ test "SHA512 one million 'a' characters" {
 }
 
 test "SHA512 digest_bytes function" {
-  let bytes = "abc".to_bytes()
+  let bytes = @utf8.encode("abc")
   let hash = @sha2.Sha512::digest_bytes(bytes)
   let expected = [
     0xddaf35a193617abaUL, 0xcc417349ae204131UL, 0x12e6fa4e89a97ea2UL, 0x0a9eeee64b55d39aUL,

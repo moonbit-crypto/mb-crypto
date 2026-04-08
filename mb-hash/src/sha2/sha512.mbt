@@ -232,13 +232,10 @@ pub fn Sha512::digest_bytes(input : Bytes) -> FixedArray[UInt64] {
 }
 
 pub fn Sha512::digest_string(input : String) -> FixedArray[UInt64] {
-  // Convert String to bytes; on some platforms this may be UTF-16LE with interleaved zeros.
-  // Filter out zero bytes to obtain the ASCII/UTF-8 representation expected by test vectors.
-  let bytes = input.to_bytes()
+  let bytes = @utf8.encode(input)
   let arr : Array[UInt] = []
   for i in 0..<bytes.length() {
-    let v = bytes[i].to_int()
-    if v != 0 { arr.push(v.reinterpret_as_uint()) }
+    arr.push(bytes[i].to_int().reinterpret_as_uint())
   }
   Sha512::digest(arr)
 }
