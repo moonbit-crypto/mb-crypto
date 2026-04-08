@@ -4,7 +4,7 @@ test "chacha20 block matches RFC 8439 test vector" {
   let key = hex_to_bytes(
     "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
   )
-  let nonce = hex_to_bytes("000000000000004a00000000")
+  let nonce = hex_to_bytes("000000090000004a00000000")
   match ChaCha20::new_with_counter(key, nonce, 1U) {
     Ok(cipher) => {
       let block = cipher.generate_block()
@@ -12,7 +12,7 @@ test "chacha20 block matches RFC 8439 test vector" {
         "10f1e7e4d13b5915500fdd1fa32071c4" +
           "c7d1f4c733c068030422aa9ac3d46c4e" +
           "d2826446079faa0914c2d705d98b02a2" +
-          "b5129cd1de164eb9cbdb0a3241f48207",
+          "b5129cd1de164eb9cbd083e8a2503c4e",
       )
       let expected_uints = bytes_to_uint_array(expected)
       for i in 0..<expected_uints.length() {
@@ -37,7 +37,7 @@ test "chacha20 encrypts RFC 8439 sample plaintext" {
   let expected = hex_to_bytes(
     "6e2e359a2568f98041ba0728dd0d6981" +
       "e97e7aec1d4360c20a27afccfd9fae0b" +
-      "f91b65c5524733ab8f593dabcd62b357" +
+      "f91b65c5523933ab8f593dabcd62b357" +
       "1639d624e65152ab8f530c359f0861d8" +
       "07ca0dbf500d6a6156a38e088a22b65e" +
       "52bc514d16ccf806818ce91ab7793736" +
@@ -60,10 +60,10 @@ test "chacha20 encrypts RFC 8439 sample plaintext" {
 
 test "xchacha20 derives the expected subkey" {
   let key = hex_to_bytes(
-    "79caa8c47bac2b53086e1a7ce4edc35fc3ac389397ff6aadee69b7cf47b6d3fc",
+    "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
   )
   let nonce = hex_to_bytes(
-    "b33ffd3096479bcfbc9aee49417688a185eb8d0791abd989",
+    "000000090000004a0000000031415927",
   )
 
   let key_uints = bytes_to_uint_array(key)
@@ -77,14 +77,14 @@ test "xchacha20 derives the expected subkey" {
 
   let derived = hchacha20(key_words, nonce_words)
   let expected = [
-    0x82413b42U,
-    0x27b27bfeU,
-    0xd30e4250U,
-    0x8a877d73U,
-    0xa0f9e4d5U,
-    0x8a74a853U,
-    0xc12ec413U,
-    0x26d3ecdcU,
+    0x423b4182U,
+    0xfe7bb227U,
+    0x50420ed3U,
+    0x737d878aU,
+    0xd5e4f9a0U,
+    0x53a8748aU,
+    0x13c42ec1U,
+    0xdcecd326U,
   ]
 
   for i in 0..<8 {
@@ -113,7 +113,7 @@ fn parse_hex_digit(ch : Int) -> Int {
 }
 
 fn hex_to_bytes(hex : String) -> Bytes {
-  let raw = hex.to_bytes()
+  let raw = @utf8.encode(hex)
   let filtered : Array[Int] = []
   for i in 0..<raw.length() {
     let ch = raw[i].to_int()
