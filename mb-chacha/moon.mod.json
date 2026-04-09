@@ -7,8 +7,6 @@
   "license": "Apache-2.0",
   "keywords": ["crypto", "chacha", "chacha20", "xchacha20", "stream-cipher"],
   "deps": {
-    "Tigls/mb-getrandom": {
-      "path": "../mb-getrandom"
-    }
+    "Tigls/mb-getrandom": "0.1.0"
   }
 }
