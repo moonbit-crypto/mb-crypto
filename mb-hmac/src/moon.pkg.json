@@ -1,6 +1,7 @@
 {
   "is-main": false,
   "import": [
-    "moonbit-crypto/mb-hash/sha2"
+    "Tigls/mb-hash/sha2",
+    { "path": "moonbitlang/core/encoding/utf8", "alias": "utf8" }
   ]
 }

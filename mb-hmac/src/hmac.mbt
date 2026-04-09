@@ -10,11 +10,10 @@ fn bytes_to_uints(bytes: Bytes) -> Array[UInt] {
 }
 
 fn string_to_uints(value: String) -> Array[UInt] {
-  let bytes = value.to_bytes()
+  let bytes = @utf8.encode(value)
   let arr : Array[UInt] = []
   for i in 0..<bytes.length() {
-    let v = bytes[i].to_int()
-    if v != 0 { arr.push(v.reinterpret_as_uint()) }
+    arr.push(bytes[i].to_int().reinterpret_as_uint())
   }
   arr
 }

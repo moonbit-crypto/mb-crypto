@@ -8,8 +8,6 @@
   "keywords": ["crypto", "mac", "hmac", "hmac-sha256", "hmac-sha512"],
   "source": "src",
   "deps": {
-    "Tigls/mb-hash": {
-      "path": "../mb-hash"
-    }
+    "Tigls/mb-hash": "0.1.0"
   }
 }
