@@ -1,6 +1,7 @@
 {
   "is-main": false,
   "import": [
-    { "path": "moonbit-crypto/mb-hmac", "alias": "hmac" }
+    { "path": "Tigls/mb-hmac", "alias": "hmac" },
+    { "path": "moonbitlang/core/encoding/utf8", "alias": "utf8" }
   ]
 }

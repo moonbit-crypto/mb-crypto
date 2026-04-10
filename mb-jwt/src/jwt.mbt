@@ -23,13 +23,10 @@ fn constant_time_eq(a: Array[UInt], b: Array[UInt]) -> Bool {
 }
 
 fn string_to_bytes_filtered_jwt(s: String) -> Array[Int] {
-  let raw = s.to_bytes()
+  let raw = @utf8.encode(s)
   let result : Array[Int] = []
   for i in 0..<raw.length() {
-    let v = raw[i].to_int()
-    if v != 0 {
-      result.push(v)
-    }
+    result.push(raw[i].to_int())
   }
   result
 }
@@ -88,7 +85,7 @@ pub fn verify(token: String, secret: String) -> Result[String, String] {
       let expected_signature = @hmac.hmac_sha256_string(signing_input, secret)
       let actual_signature = base64url_decode(signature_encoded)
 
-      if not(constant_time_eq(fixed_to_array(expected_signature), actual_signature)) {
+      if !(constant_time_eq(fixed_to_array(expected_signature), actual_signature)) {
         return Err("Invalid signature")
       }
 

@@ -107,7 +107,7 @@ test "jwt tampered payload fails verification" {
   let tampered_payload = base64url_encode_string("{\"sub\":\"hacked\"}")
 
   // Find the dots and reconstruct with tampered payload
-  let token_bytes = token.to_bytes()
+  let token_bytes = @utf8.encode(token)
   let mut first_dot = -1
   let mut second_dot = -1
   for i in 0..<token_bytes.length() {
@@ -126,17 +126,13 @@ test "jwt tampered payload fails verification" {
   let mut header_part = ""
   for i in 0..<first_dot {
     let c = token_bytes[i].to_int()
-    if c != 0 {
-      header_part = header_part + c.unsafe_to_char().to_string()
-    }
+    header_part = header_part + c.unsafe_to_char().to_string()
   }
 
   let mut signature_part = ""
   for i in (second_dot + 1)..<token_bytes.length() {
     let c = token_bytes[i].to_int()
-    if c != 0 {
-      signature_part = signature_part + c.unsafe_to_char().to_string()
-    }
+    signature_part = signature_part + c.unsafe_to_char().to_string()
   }
 
   let tampered_token = header_part + "." + tampered_payload + "." + signature_part

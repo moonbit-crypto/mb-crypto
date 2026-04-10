@@ -36,13 +36,10 @@ fn get_decode_value(ch: Int) -> Int {
 }
 
 fn string_to_bytes_filtered(s: String) -> Array[Int] {
-  let raw = s.to_bytes()
+  let raw = @utf8.encode(s)
   let result : Array[Int] = []
   for i in 0..<raw.length() {
-    let v = raw[i].to_int()
-    if v != 0 {
-      result.push(v)
-    }
+    result.push(raw[i].to_int())
   }
   result
 }
