@@ -1,0 +1,6 @@
+{
+  "is-main": false,
+  "import": [
+    { "path": "Tigls/mb-hmac", "alias": "hmac" }
+  ]
+}
