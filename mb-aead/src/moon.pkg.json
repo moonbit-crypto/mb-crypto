@@ -1,0 +1,10 @@
+{
+  "is_main": false,
+  "import": [
+    { "path": "Tigls/mb-chacha/src", "alias": "chacha" },
+    { "path": "Tigls/mb-poly1305", "alias": "poly1305" }
+  ],
+  "test-import": [
+    { "path": "moonbitlang/core/encoding/utf8", "alias": "utf8" }
+  ]
+}
