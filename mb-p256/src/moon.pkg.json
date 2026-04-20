@@ -1,0 +1,10 @@
+{
+  "is_main": false,
+  "import": [
+    "Tigls/mb-hash/sha2",
+    { "path": "Tigls/mb-hmac", "alias": "hmac" }
+  ],
+  "test-import": [
+    { "path": "moonbitlang/core/encoding/utf8", "alias": "utf8" }
+  ]
+}
