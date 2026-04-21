@@ -160,3 +160,107 @@ test "jwt.io test vector" {
     Err(_) => assert_true(false)
   }
 }
+
+// --- ES256 Tests ---
+
+fn hex_to_uints(hex : String) -> Array[UInt] {
+  let raw = @utf8.encode(hex)
+  let chars : Array[Int] = []
+  for i in 0..<raw.length() {
+    let ch = raw[i].to_int()
+    if (ch >= 48 && ch <= 57) || (ch >= 65 && ch <= 70) || (ch >= 97 && ch <= 102) {
+      chars.push(ch)
+    }
+  }
+  let result : Array[UInt] = []
+  let mut i = 0
+  while i + 1 < chars.length() {
+    let hi = parse_hex_digit_jwt(chars[i])
+    let lo = parse_hex_digit_jwt(chars[i + 1])
+    result.push(((hi << 4) | lo).reinterpret_as_uint())
+    i = i + 2
+  }
+  result
+}
+
+fn parse_hex_digit_jwt(ch : Int) -> Int {
+  if ch >= 48 && ch <= 57 { ch - 48 }
+  else if ch >= 97 && ch <= 102 { ch - 87 }
+  else if ch >= 65 && ch <= 70 { ch - 55 }
+  else { 0 }
+}
+
+test "ES256 sign and verify round trip" {
+  let private_key = hex_to_uints(
+    "c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721",
+  )
+  let payload = "{\"sub\":\"1234567890\",\"name\":\"John\",\"iat\":1516239022}"
+
+  // Derive public key
+  match @p256.derive_public_key(private_key) {
+    Err(e) => {
+      println("keygen error: \{e}")
+      assert_true(false)
+    }
+    Ok(public_key) => {
+      match sign_es256(payload, private_key) {
+        Err(e) => {
+          println("sign error: \{e}")
+          assert_true(false)
+        }
+        Ok(token) => {
+          // Check header is ES256
+          assert_true(token.has_prefix("eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9."))
+
+          // Verify
+          match verify_es256(token, public_key) {
+            Ok(decoded) => assert_eq(decoded, payload)
+            Err(e) => {
+              println("verify error: \{e}")
+              assert_true(false)
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+test "ES256 rejects tampered token" {
+  let private_key = hex_to_uints(
+    "c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721",
+  )
+  let payload = "{\"sub\":\"1234567890\"}"
+
+  match @p256.derive_public_key(private_key) {
+    Err(_) => assert_true(false)
+    Ok(public_key) => {
+      match sign_es256(payload, private_key) {
+        Err(_) => assert_true(false)
+        Ok(token) => {
+          // Tamper with the payload part
+          let tampered = token + "x"
+          match verify_es256(tampered, public_key) {
+            Ok(_) => assert_true(false) // should fail
+            Err(_) => assert_true(true)
+          }
+        }
+      }
+    }
+  }
+}
+
+test "ES256 decode header shows ES256 algorithm" {
+  let private_key = hex_to_uints(
+    "c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721",
+  )
+  match sign_es256("{\"test\":true}", private_key) {
+    Err(_) => assert_true(false)
+    Ok(token) => {
+      match decode_header(token) {
+        Ok(header) => assert_eq(header, "{\"alg\":\"ES256\",\"typ\":\"JWT\"}")
+        Err(_) => assert_true(false)
+      }
+    }
+  }
+}

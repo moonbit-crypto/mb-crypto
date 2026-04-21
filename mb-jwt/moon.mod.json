@@ -8,8 +8,7 @@
   "keywords": ["crypto", "jwt", "token", "hs256", "json-web-token"],
   "source": "src",
   "deps": {
-    "Tigls/mb-hmac": {
-      "path": "../mb-hmac"
-    }
+    "Tigls/mb-hmac": "0.1.0",
+    "Tigls/mb-p256": "0.1.0"
   }
 }
